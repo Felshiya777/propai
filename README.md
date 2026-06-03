@@ -3,7 +3,7 @@
 India's smartest property price predictor with dark luxury UI, ML models, and AI advisor.
 
 ## 🌐 Live Demo
-> [Add your Streamlit URL here after deployment]
+> https://propai-jt4vavahqjnigeny777e4wrv.streamlit.app
 
 ## ✨ Features
 - 🔑 Secure Login & Sign Up
