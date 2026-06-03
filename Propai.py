@@ -234,6 +234,7 @@ section[data-testid="stSidebar"] {
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+
 USERS_FILE = "propai_users.json"
 HISTORY_FILE_PREFIX = "propai_history_"
 ALERTS_FILE_PREFIX = "propai_alerts_"
@@ -719,31 +720,17 @@ with tabs[1]:
                                  "price_sqft": price/p["area"]})
 
             # Comparison metrics
-            metrics = ["price", "score", "growth", "price_sqft"]
-            metric_labels = ["Price (₹L)", "Score /10", "Growth %", "Price/sqft"]
+            best_idx = max(range(3), key=lambda x: results[x]["score"])
             c1, c2, c3 = st.columns(3)
             for i, (col, r) in enumerate(zip([c1,c2,c3], results)):
-                best = i == max(range(3), key=lambda x: results[x]["score"])
+                best = i == best_idx
                 with col:
-                    border = "rgba(212,175,55,0.5)" if best else "#1e2433"
-                    st.markdown(f"""
-                    <div style='background:#0f1422; border:2px solid {border}; border-radius:16px; padding:1.2rem; text-align:center;'>
-                        {"<div style='color:#D4AF37; font-size:11px; margin-bottom:8px;'>⭐ BEST CHOICE</div>" if best else ""}
-                        <div style='font-size:18px; font-weight:700; color:#D4AF37;'>{r['city']}</div>
-                        <div style='font-size:13px; color:#4b5563; margin:4px 0;'>{r['bhk']}BHK · {r['area']} sqft</div>
-                        <div style='font-size:28px; font-weight:700; color:#D4AF37; margin:12px 0;'>₹{r['price']/100000:.1f}L</div>
-                        <div style='display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px;'>
-                            <div style='background:#0a0e1a; border-radius:8px; padding:8px;'>
-                                <div style='font-size:10px; color:#4b5563;'>Score</div>
-                                <div style='font-size:16px; font-weight:600; color:#10b981;'>{r['score']}/10</div>
-                            </div>
-                            <div style='background:#0a0e1a; border-radius:8px; padding:8px;'>
-                                <div style='font-size:10px; color:#4b5563;'>Growth</div>
-                                <div style='font-size:16px; font-weight:600; color:#3b82f6;'>+{r['growth']}%</div>
-                            </div>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    if best:
+                        st.success("⭐ BEST CHOICE")
+                    st.metric(f"🏙️ {r['city']}", f"₹{r['price']/100000:.1f}L")
+                    st.metric("📐 Size", f"{r['bhk']}BHK · {r['area']} sqft")
+                    st.metric("🏆 Score", f"{r['score']}/10")
+                    st.metric("📈 Growth", f"+{r['growth']}%")
 
             # Bar chart comparison
             st.markdown("---")
